@@ -194,12 +194,17 @@
       "anio": 2026,
       "mes": 8,
       "file": "base_2026_08.json"
+    },
+    {
+      "anio": 2026,
+      "mes": 9,
+      "file": "base_2026_09.json"
     }
   ],
   "ultimo": {
     "anio": 2026,
-    "mes": 8
+    "mes": 9
   },
-  "generado": "2026-08-31 13:10:08",
+  "generado": "2026-09-07 15:26:01",
   "origen": "C:\\Users\\USUARIO\\Desktop\\BASE DE DATOS\\Escritorio\\USPP\\BASE DE DATOS 2"
 }
