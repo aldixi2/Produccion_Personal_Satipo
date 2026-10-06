@@ -279,23 +279,6 @@
   @media(max-width:900px){.grid{grid-template-columns:1fr}}
 
   /* ══════════════════════════════
-     ANALÍTICA CONTEXTUAL
-  ══════════════════════════════ */
-  .analytics-card{background:linear-gradient(180deg,#F9FCFF 0%,#FFFFFF 100%);overflow:hidden}
-  .analytics-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-bottom:13px;border-bottom:1px solid #E3ECF4;margin-bottom:13px}
-  .analytics-eyebrow{font-size:9px;font-weight:800;letter-spacing:1.1px;color:#0F6CBD;margin-bottom:3px}
-  .analytics-title{font-family:var(--f-display);font-size:17px;font-weight:800;color:#0B3154}
-  .analytics-selection{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid #CFE2EE;border-radius:999px;background:#F2F9FD;color:#31536B;font-size:10px;font-weight:700;white-space:nowrap}
-  .sel-dot{width:7px;height:7px;border-radius:50%;background:#0FAF8C;box-shadow:0 0 0 3px rgba(15,175,140,.12)}
-  .analytics-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:12px}
-  .analytics-grid .chartbox{min-height:265px}
-  .analytics-grid .chartbox-wide{grid-column:1 / -1;min-height:300px}
-  .analytics-grid canvas{height:220px !important;max-height:220px !important}
-  .analytics-grid .chartbox-wide canvas{height:250px !important;max-height:250px !important}
-  @media(max-width:1100px){.analytics-grid{grid-template-columns:1fr 1fr}.analytics-grid .chartbox-wide{grid-column:1 / -1}}
-  @media(max-width:700px){.analytics-head{align-items:flex-start;flex-direction:column}.analytics-grid{grid-template-columns:1fr}.analytics-grid .chartbox-wide{grid-column:auto}}
-
-  /* ══════════════════════════════
      KPI ANUAL
   ══════════════════════════════ */
   .kpi-anual-badge{
@@ -676,7 +659,6 @@
     .badge-cumpl{font-size:7px;padding:1px 4px}
     .leyenda{font-size:7.5px;gap:9px;margin-top:5px}
     #printFooter{font-size:8px;padding-top:4px;margin-top:5px}
-    #cardAnalitica{display:none !important}
   }
   @media(max-width:900px){
     .wrap{padding:14px 12px 28px}.screen-heading{align-items:flex-start;flex-direction:column}.screen-heading h2{font-size:21px}
@@ -872,46 +854,6 @@
     </div>
   </div>
 
-  <!-- ANALÍTICA CONTEXTUAL -->
-  <div class="card analytics-card no-print" id="cardAnalitica">
-    <div class="analytics-head">
-      <div>
-        <div class="analytics-eyebrow">ANÁLISIS DINÁMICO</div>
-        <div class="analytics-title">Comportamiento de la producción</div>
-        <div class="muted" id="analyticsContext">Toda la Red de Salud Satipo · filtros aplicados</div>
-      </div>
-      <div class="analytics-selection" id="analyticsSelection">
-        <span class="sel-dot"></span><span id="analyticsSelectionText">Red completa</span>
-      </div>
-    </div>
-    <div class="analytics-grid">
-      <div class="chartbox chartbox-wide">
-        <div class="chartbox-titulo">Producción diaria · tendencia del período</div>
-        <canvas id="c_dia"></canvas>
-      </div>
-      <div class="chartbox">
-        <div class="chartbox-titulo">Producción acumulada</div>
-        <canvas id="c_acum"></canvas>
-      </div>
-      <div class="chartbox">
-        <div class="chartbox-titulo">Distribución por establecimiento</div>
-        <canvas id="c_eess_mix"></canvas>
-      </div>
-      <div class="chartbox">
-        <div class="chartbox-titulo">Top servicios / prestaciones</div>
-        <canvas id="c_servicios"></canvas>
-      </div>
-      <div class="chartbox">
-        <div class="chartbox-titulo">Nivel de producción diaria</div>
-        <canvas id="c_perfil"></canvas>
-      </div>
-      <div class="chartbox">
-        <div class="chartbox-titulo">Producción por día de semana</div>
-        <canvas id="c_semana"></canvas>
-      </div>
-    </div>
-  </div>
-
   <!-- REPORTE ANUAL -->
   <div class="card" id="cardReporteAnual">
     <div class="card-titulo"><div class="icono"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="13" height="11.5" rx="1.5"/><line x1="2.5" y1="7.5" x2="15.5" y2="7.5"/><line x1="6" y1="2" x2="6" y2="5"/><line x1="12" y1="2" x2="12" y2="5"/></svg></div> Reporte anual (imprimible)</div>
@@ -1012,7 +954,6 @@ let BASE = [];
 let PREV_BASE = []; // base del mes anterior (para tendencia)
 let MANIFEST = null;
 let chartEESS=null, chartTipo=null, chartAnioMes=null, chartYearsTotal=null;
-let chartDia=null, chartAcum=null, chartServicios=null, chartPerfil=null, chartEESSMix=null, chartSemana=null;
 const YEAR_CACHE       = new Map();
 const YEARS_TOTAL_CACHE = new Map();
 const $ = id => document.getElementById(id);
@@ -1915,70 +1856,54 @@ function renderRanking(){
 }
 
 
-function destroyChart(c){ try{ if(c) c.destroy(); }catch(e){} return null; }
-
-function chartBaseOptions(){
-  return {
-    responsive:true, maintainAspectRatio:false,
-    interaction:{mode:'index',intersect:false},
-    plugins:{legend:{display:false},tooltip:{backgroundColor:'#0B3154',padding:10,titleFont:{weight:'700'},bodyFont:{size:11}}},
-    scales:{x:{grid:{color:'#EDF2F7'},ticks:{font:{size:9},maxRotation:0}},y:{grid:{color:'#EDF2F7'},beginAtZero:true,ticks:{font:{size:9}}}}
-  };
-}
 function renderCharts(d){
-  /* Gráficos generales existentes */
+  /* EESS */
   const eCount=new Map();
-  for(const x of d){ const k=x.establecimiento||''; if(k) eCount.set(k,(eCount.get(k)||0)+1); }
+  for(const x of d){
+    const k=x.establecimiento||""; if(!k) continue;
+    eCount.set(k,(eCount.get(k)||0)+1);
+  }
   const topE=[...eCount.entries()].sort((a,b)=>b[1]-a[1]).slice(0,15);
+
+  /* Tipo profesional */
   const tCount=new Map();
-  for(const x of d){ const k=x.tipo_profesional||'SIN DATO'; tCount.set(k,(tCount.get(k)||0)+1); }
+  for(const x of d){
+    const k=x.tipo_profesional||"SIN DATO";
+    tCount.set(k,(tCount.get(k)||0)+1);
+  }
   const tArr=[...tCount.entries()].sort((a,b)=>b[1]-a[1]).slice(0,12);
 
-  chartEESS=destroyChart(chartEESS); chartTipo=destroyChart(chartTipo);
-  chartEESS=new Chart($('c_eess'),{type:'bar',data:{labels:topE.map(x=>x[0]),datasets:[{label:'Registros',data:topE.map(x=>x[1]),backgroundColor:topE.map((_,i)=>`rgba(15,108,189,${(0.95-i*0.035).toFixed(2)})`),borderRadius:6,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,layout:{padding:{right:38}},plugins:{legend:{display:false}},scales:{x:{grid:{color:'#EDF2F7'}},y:{grid:{display:false},ticks:{font:{size:10}}}}},plugins:[valueLabelPlugin]});
-  chartTipo=new Chart($('c_tipo'),{type:'doughnut',data:{labels:tArr.map(x=>x[0]),datasets:[{data:tArr.map(x=>x[1]),backgroundColor:PALETTE.slice(0,tArr.length),borderWidth:3,borderColor:'#fff',hoverOffset:7}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12,padding:8}}}}});
+  if(chartEESS) chartEESS.destroy();
+  if(chartTipo)  chartTipo.destroy();
 
-  /* Analítica contextual */
-  const byDay=new Map();
-  for(const r of d){ const day=Number(r.dia||String(r.fecha||'').slice(8,10)); if(day) byDay.set(day,(byDay.get(day)||0)+1); }
-  const days=[...byDay.keys()].sort((a,b)=>a-b);
-  const vals=days.map(k=>byDay.get(k));
-  let running=0; const acum=vals.map(v=>{running+=v;return running;});
+  chartEESS=new Chart($("c_eess"),{
+    type:"bar",
+    data:{ labels:topE.map(x=>x[0]), datasets:[{
+      label:"Registros", data:topE.map(x=>x[1]),
+      backgroundColor: topE.map((_,i)=>{
+        const alpha=0.55+0.45*(i===0?1:(1-i/topE.length));
+        return `rgba(15,42,92,${alpha.toFixed(2)})`;
+      }),
+      borderRadius:5, borderSkipped:false
+    }]},
+    options:{ indexAxis:"y", responsive:true, maintainAspectRatio:false, layout:{padding:{right:34}},
+      plugins:{ legend:{display:false} },
+      scales:{ x:{grid:{color:"#EDEAE0"}}, y:{grid:{display:false},ticks:{font:{size:10}}} }
+    },
+    plugins:[valueLabelPlugin]
+  });
 
-  const byService=new Map();
-  for(const r of d){ const k=(r.servicio||'SIN DATO').trim(); byService.set(k,(byService.get(k)||0)+1); }
-  const services=[...byService.entries()].sort((a,b)=>b[1]-a[1]).slice(0,10);
-
-  const byEess=[...eCount.entries()].sort((a,b)=>b[1]-a[1]);
-  const pieEess=byEess.slice(0,7);
-  if(byEess.length>7){ pieEess.push(['Otros',byEess.slice(7).reduce((a,x)=>a+x[1],0)]); }
-
-  /* Nivel diario: bajo / medio / alto según estándar general de volumen. */
-  const low=vals.filter(v=>v<Math.max(1,vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1)*0.5)).length;
-  const high=vals.filter(v=>v>vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1)*1.25).length;
-  const medium=Math.max(0,vals.length-low-high);
-
-  const weekMap=new Map([['Lunes',0],['Martes',0],['Miércoles',0],['Jueves',0],['Viernes',0],['Sábado',0],['Domingo',0]]);
-  for(const r of d){ const dt=new Date(`${r.fecha||''}T12:00:00`); if(!isNaN(dt)){ const names=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']; const n=names[dt.getDay()]; weekMap.set(n,(weekMap.get(n)||0)+1); } }
-
-  chartDia=destroyChart(chartDia); chartAcum=destroyChart(chartAcum); chartServicios=destroyChart(chartServicios); chartPerfil=destroyChart(chartPerfil); chartEESSMix=destroyChart(chartEESSMix); chartSemana=destroyChart(chartSemana);
-  const common=chartBaseOptions();
-  chartDia=new Chart($('c_dia'),{type:'line',data:{labels:days.map(x=>String(x)),datasets:[{label:'FUAs',data:vals,borderColor:'#0F6CBD',backgroundColor:'rgba(15,108,189,.12)',fill:true,tension:.35,pointRadius:3,pointHoverRadius:6,pointBackgroundColor:'#fff',pointBorderWidth:2,pointBorderColor:'#0F6CBD'}]},options:{...common,plugins:{...common.plugins,tooltip:{...common.plugins.tooltip,callbacks:{label:c=>` ${Number(c.raw).toLocaleString()} FUAs`}}}}});
-  chartAcum=new Chart($('c_acum'),{type:'line',data:{labels:days.map(x=>String(x)),datasets:[{label:'Acumulado',data:acum,borderColor:'#0FAF8C',backgroundColor:'rgba(15,175,140,.10)',fill:true,tension:.32,pointRadius:2}]},options:{...common,plugins:{...common.plugins,tooltip:{...common.plugins.tooltip,callbacks:{label:c=>` ${Number(c.raw).toLocaleString()} FUAs acumuladas`}}}}});
-  chartEESSMix=new Chart($('c_eess_mix'),{type:'doughnut',data:{labels:pieEess.map(x=>x[0]),datasets:[{data:pieEess.map(x=>x[1]),backgroundColor:PALETTE.slice(0,pieEess.length),borderColor:'#fff',borderWidth:3,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'54%',plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:10,padding:6}}}}});
-  chartServicios=new Chart($('c_servicios'),{type:'bar',data:{labels:services.map(x=>x[0].length>34?x[0].slice(0,34)+'…':x[0]),datasets:[{label:'FUAs',data:services.map(x=>x[1]),backgroundColor:'#6D5CE7',borderRadius:5}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,layout:{padding:{right:34}},plugins:{legend:{display:false}},scales:{x:{grid:{color:'#EDF2F7'}},y:{grid:{display:false},ticks:{font:{size:8.5}}}}},plugins:[valueLabelPlugin]});
-  chartPerfil=new Chart($('c_perfil'),{type:'doughnut',data:{labels:['Baja','Media','Alta'],datasets:[{data:[low,medium,high],backgroundColor:['#BFEAF1','#0F6CBD','#0FAF8C'],borderColor:'#fff',borderWidth:3,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:11,padding:10}}}}});
-  chartSemana=new Chart($('c_semana'),{type:'bar',data:{labels:[...weekMap.keys()],datasets:[{label:'FUAs',data:[...weekMap.values()],backgroundColor:['#1B4A6E','#255F8C','#0F6CBD','#6D5CE7','#0FAF8C','#E49C30','#CBD5E1'],borderRadius:6}]},options:{...common,plugins:{...common.plugins,tooltip:{...common.plugins.tooltip,callbacks:{label:c=>` ${Number(c.raw).toLocaleString()} FUAs`}}}}});
-
-  const prof=PROF_SELECTED_FULL ? labelConfidencial(PROF_SELECTED_FULL) : '';
-  const estab=unesc($('estab').value||'');
-  const tipo=unesc($('tipo').value||'');
-  let context='Toda la Red de Salud Satipo';
-  if(prof) context=`Profesional: ${prof}`;
-  else if(estab) context=`Establecimiento: ${estab}`;
-  else if(tipo) context=`Tipo profesional: ${tipo}`;
-  $('analyticsContext').textContent=`${context} · ${d.length.toLocaleString()} registros analizados`;
-  $('analyticsSelectionText').textContent=prof?`Perfil: ${prof}`:(estab?`EESS: ${estab}`:(tipo?`Tipo: ${tipo}`:'Red completa'));
+  chartTipo=new Chart($("c_tipo"),{
+    type:"doughnut",
+    data:{ labels:tArr.map(x=>x[0]), datasets:[{
+      data:tArr.map(x=>x[1]),
+      backgroundColor:PALETTE.slice(0,tArr.length),
+      borderWidth:2, borderColor:"#fff", hoverOffset:6
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:"right",labels:{font:{size:10},boxWidth:12,padding:8}} }
+    }
+  });
 }
 
 /* ══════════════════════════════════════════
