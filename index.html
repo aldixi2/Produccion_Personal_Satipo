@@ -546,6 +546,124 @@
     .rk-podio-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid;transform:none !important}
     .rk-row{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
+
+  /* ==========================================================
+     REDISEÑO PROFESIONAL — RED DE SALUD SATIPO
+     Capa visual sobre la lógica existente. Optimizada para
+     pantalla, proyección y reporte A4 horizontal.
+  ========================================================== */
+  :root{
+    --navy:#092B4C;
+    --navy-2:#0B3A63;
+    --blue:#0F6CBD;
+    --cyan:#12A8C7;
+    --teal:#0FAF8C;
+    --orange:#F59E0B;
+    --purple:#6D5CE7;
+    --paper:#F4F7FB;
+    --line:#DCE5EF;
+    --ink:#10243A;
+    --muted:#64748B;
+    --card:#FFFFFF;
+    --shadow:0 10px 28px rgba(9,43,76,.07);
+  }
+  body{background:linear-gradient(180deg,#EEF5FA 0,#F7F9FC 180px,#F4F7FB 100%);color:var(--ink)}
+  header{
+    position:sticky;top:0;z-index:20;padding:12px 22px 13px;
+    background:linear-gradient(115deg,#062443 0%,#0B3A63 58%,#0C5272 100%);
+    box-shadow:0 8px 24px rgba(9,43,76,.18);
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
+  header::after{height:3px;bottom:-3px;background:linear-gradient(90deg,#19B7D2,#0FAF8C,#F59E0B);opacity:1}
+  .brand{gap:13px}
+  .brand img{height:46px;width:46px;background:#fff;border-radius:12px;padding:5px;box-shadow:0 5px 16px rgba(0,0,0,.18)}
+  .brand-texto h1{font-size:17px;letter-spacing:.35px}
+  .brand-texto .sub{color:#BFD8EB;font-size:11px;margin-top:3px}
+  .bloque-fechas{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.08)}
+  .badge-estado{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.12)}
+  .btn-print{background:linear-gradient(135deg,#0EA5E9,#0FAF8C);box-shadow:0 6px 16px rgba(14,165,233,.22)}
+  .btn-print:hover{background:linear-gradient(135deg,#0284C7,#059669)}
+
+  .wrap{max-width:1680px;padding:20px 24px 36px}
+  .screen-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin:2px 0 16px}
+  .screen-heading .eyebrow{font-size:10px;font-weight:800;letter-spacing:1.2px;color:#0F6CBD;margin-bottom:5px}
+  .screen-heading h2{font-size:24px;line-height:1.05;color:#0B3154;margin:0;font-weight:800}
+  .screen-heading p{font-size:12px;color:var(--muted);margin-top:6px}
+  .report-badge{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:11px;font-weight:700;color:#36536D;box-shadow:0 4px 14px rgba(9,43,76,.05)}
+  .report-badge .dot{width:8px;height:8px;border-radius:50%;background:#0FAF8C;box-shadow:0 0 0 4px rgba(15,175,140,.12)}
+
+  .card,.kpi{border-color:var(--line);box-shadow:var(--shadow);border-radius:14px}
+  .card{padding:17px 18px;margin-bottom:15px}
+  .card-titulo{font-size:14px;color:#143B5B;border-bottom-color:#E6EDF4;padding-bottom:10px;margin-bottom:14px}
+  .card-titulo .icono{background:linear-gradient(135deg,#E8F4FF,#E9FBF7);color:#0F6CBD;border-radius:9px}
+  .kpis{gap:12px;margin-bottom:15px}
+  .kpi{padding:16px 48px 15px 17px;border-top:4px solid #0F6CBD;overflow:hidden}
+  .kpi::after{content:'';position:absolute;right:-22px;bottom:-34px;width:90px;height:90px;border-radius:50%;background:rgba(15,108,189,.06)}
+  .kpi.k2{border-top-color:#0FAF8C}.kpi.k3{border-top-color:#6D5CE7}.kpi.k4{border-top-color:#F59E0B}
+  .kpi .klabel{color:#708399;font-size:9.5px;letter-spacing:.8px}
+  .kpi .kval{font-size:29px;color:#0B3154}
+  .kpi .ksub{font-size:10.5px}
+  .kpi .kicon{width:30px;height:30px;border-radius:9px;background:#0F6CBD;box-shadow:0 5px 12px rgba(15,108,189,.22)}
+  .kpi.k2 .kicon{background:#0FAF8C}.kpi.k3 .kicon{background:#6D5CE7}.kpi.k4 .kicon{background:#F59E0B}
+
+  .grid{gap:14px}
+  .chartbox{border:1px solid #E2EAF2;border-radius:12px;background:linear-gradient(180deg,#FFFFFF,#FBFDFF);padding:13px 14px;box-shadow:0 5px 16px rgba(9,43,76,.035)}
+  .chartbox-titulo{font-weight:800;color:#183F5D;font-size:12px;margin-bottom:8px}
+  .tabs{gap:7px}
+  .tab{border-color:var(--line);background:#F8FAFC;color:#64748B;padding:8px 14px;border-radius:10px}
+  .tab:hover{border-color:#8BCFE0;color:#0F6CBD}
+  .tab.active{background:linear-gradient(135deg,#0B3A63,#0F6CBD);border-color:#0B3A63;box-shadow:0 5px 14px rgba(9,58,99,.18)}
+  .scroll{border-color:#DCE5EF;border-radius:11px;max-height:590px}
+  table{font-size:10.5px}
+  th{background:linear-gradient(180deg,#0E4674,#092F52);font-size:9.5px;padding:8px 7px}
+  th.th-total{background:#071F37}
+  td{padding:5px 6px;border-bottom-color:#EDF2F7}
+  tr:nth-child(even) td{background:#F8FAFC}
+  tr:hover td{background:#EAF5FB !important}
+  .td-eess,.td-prof{background:#fff}
+  .c-hot{background:#0B3A63 !important}.c-med{background:#9DDDE8 !important}.c-low{background:#E8F7FA !important}
+  .c-alert{background:#FFF0F0 !important;color:#B42318 !important;box-shadow:inset 0 0 0 1.5px #EF4444}
+  .leyenda{gap:16px;margin-top:10px}
+  .leyenda-dot{border-radius:3px}
+  .muted{color:#718198}
+  .btn-ap{background:linear-gradient(135deg,#0F6CBD,#0B3A63);box-shadow:0 5px 12px rgba(15,108,189,.15)}
+  .btn-cl{background:#F8FAFC;border-color:#DCE5EF}
+  input,select{border-color:#D8E3EC !important;border-radius:9px !important;background:#fff !important;min-height:35px}
+  input:focus,select:focus{border-color:#67BBD0 !important;box-shadow:0 0 0 3px rgba(18,168,199,.10)}
+
+  /* Barra de filtros más limpia */
+  .card:has(#anio){background:linear-gradient(180deg,#FFFFFF,#FBFDFF)}
+  .fg label{font-size:9.5px !important;color:#60758A !important;font-weight:800 !important;letter-spacing:.45px;text-transform:uppercase}
+
+  /* Impresión profesional */
+  @media print{
+    @page{size:A4 landscape;margin:8mm 7mm}
+    body{background:#fff !important;color:#111827}
+    .screen-heading{display:none !important}
+    .wrap{max-width:none;padding:0}
+    #printHeader{margin-bottom:7px;padding-bottom:7px;border-bottom:2.5px solid #0B3A63}
+    #printHeader img{height:42px;width:42px;object-fit:contain;background:#fff;border-radius:8px;margin-right:2px}
+    #printTitle{font-size:16px !important;color:#092B4C !important;letter-spacing:.3px}
+    #printSub{font-size:10px;color:#3E5870}
+    #printFechas{font-size:8.5px;color:#718096}
+    #printFiltroBanner{background:#F1F7FB;border-color:#C9DFEC;border-left:4px solid #0F6CBD;border-radius:5px;padding:6px 10px;margin-bottom:6px}
+    .pf-item .pf-label{font-size:7.5px;color:#52718B}.pf-item .pf-value{font-size:11.5px;color:#0B3A63}
+    .card{box-shadow:none !important;border:1px solid #D8E1EA;border-radius:5px;margin-bottom:6px;padding:8px 9px}
+    .card-titulo{font-size:11px;padding-bottom:5px;margin-bottom:6px}
+    .card-titulo .icono{width:21px;height:21px}
+    .chartbox{box-shadow:none;border-color:#E1E7ED;padding:6px}
+    .kpi{box-shadow:none;border-radius:5px;padding:7px 10px}
+    .kpi .kval{font-size:18px}.kpi .klabel{font-size:7.5px}.kpi .ksub{font-size:8px}
+    table{font-size:8px}.th-eess,.td-eess{width:125px;max-width:125px}.th-prof,.td-prof{width:115px;max-width:115px}
+    th{font-size:7.5px;padding:5px 4px}.th-day{font-size:7px !important}td{font-size:8px;padding:3px 4px}
+    .badge-cumpl{font-size:7px;padding:1px 4px}
+    .leyenda{font-size:7.5px;gap:9px;margin-top:5px}
+    #printFooter{font-size:8px;padding-top:4px;margin-top:5px}
+  }
+  @media(max-width:900px){
+    .wrap{padding:14px 12px 28px}.screen-heading{align-items:flex-start;flex-direction:column}.screen-heading h2{font-size:21px}
+  }
+
 </style>
 </head>
 
@@ -564,8 +682,8 @@
       </svg>
     </div>
     <div class="brand-texto">
-      <h1>Dashboard de Producción — USPP Satipo</h1>
-      <div class="sub">Sistema de Información del Personal de Salud</div>
+      <h1>RED DE SALUD SATIPO</h1>
+      <div class="sub">USPP · Producción del Personal de Salud</div>
     </div>
   </div>
 
@@ -594,7 +712,7 @@
   <div id="printHeader">
     <img src="logo.png" alt="USPP Satipo" onerror="this.style.display='none'">
     <div>
-      <p id="printTitle">PRODUCCIÓN DEL PERSONAL DE SALUD — USPP SATIPO</p>
+      <p id="printTitle">PRODUCCIÓN DEL PERSONAL DE SALUD — RED DE SALUD SATIPO</p>
       <div id="printSub"></div>
       <div id="printFechas"></div>
       <div id="printKPIs" style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -603,6 +721,15 @@
 
   <!-- Banner destacado: qué EESS / qué personal se está viendo (solo impresión) -->
   <div id="printFiltroBanner"></div>
+
+  <div class="screen-heading no-print">
+    <div>
+      <div class="eyebrow">UNIDAD DE SEGUROS PÚBLICOS Y PRIVADOS · USPP</div>
+      <h2>Producción del personal de salud</h2>
+      <p>Panel analítico de la Red de Salud Satipo · seguimiento mensual, establecimientos y profesionales.</p>
+    </div>
+    <div class="report-badge"><span class="dot"></span><span id="screenPeriod">Periodo seleccionado</span></div>
+  </div>
 
   <!-- KPIs -->
   <div class="kpis no-print" id="kpiCards">
@@ -814,7 +941,7 @@
 
   <!-- FOOTER IMPRESIÓN -->
   <div class="card" id="printFooter">
-    Sistema creado por Junnior Aldair Illesca Medina — USPP Satipo &nbsp;|&nbsp; <span id="printFechaFooter"></span>
+    Elaborado por Junior Aldair Illesca Medina · Informática USPP · Red de Salud Satipo &nbsp;|&nbsp; <span id="printFechaFooter"></span>
   </div>
 
 </div><!-- /wrap -->
@@ -1008,7 +1135,7 @@ $("tabPersonal").onclick = ()=>{
   $("cardPersonal").style.display="";
   $("cardEESS").style.display="none";
   $("cardRanking").style.display="none";
-  $("printTitle").textContent="PRODUCCIÓN DEL PERSONAL DE SALUD — USPP SATIPO";
+  $("printTitle").textContent="PRODUCCIÓN DEL PERSONAL DE SALUD — RED DE SALUD SATIPO";
   $("cardPersonal").classList.remove("anim-fadein"); void $("cardPersonal").offsetWidth; $("cardPersonal").classList.add("anim-fadein");
 };
 $("tabEESS").onclick = ()=>{
@@ -1314,6 +1441,8 @@ function render(){
   if(!BASE.length) return;
   ocultarEsqueletoKPIs();
   $("printSub").textContent=filtrosTexto();
+  const periodoTxt = `${MONTHS.find(x=>x.n===Number($("mes").value))?.t||$("mes").value} ${$("anio").value}`;
+  if($("screenPeriod")) $("screenPeriod").textContent = periodoTxt;
   $("printFechas").textContent=$("fechaActualizacion").textContent+" | "+$("fechaDigitacion").textContent;
   actualizarBannerFiltro();
   const d=aplicarFiltros();
