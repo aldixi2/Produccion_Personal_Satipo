@@ -703,15 +703,57 @@
   #cardReporteAnual.analytics-visible{display:block}
   @media(max-width:800px){.mini-nav{width:100%;overflow:auto}.mini-tab{flex:1;white-space:nowrap}.compact-grid-2{grid-template-columns:1fr}.compact-grid-2 .chartbox-wide{grid-column:auto}}
 
+
+  /* REDISEÑO DASHBOARD · REFERENCIA USPP */
+  :root{--side:#062B52;--accent:#1687E8;--surface:#F4F8FC}
+  body{background:var(--surface)}
+  .app-sidebar{position:fixed;z-index:30;left:0;top:0;bottom:0;width:248px;background:linear-gradient(180deg,#05284B 0%,#07335E 58%,#06294B 100%);color:#fff;padding:18px 14px 16px;display:flex;flex-direction:column;box-shadow:8px 0 28px rgba(2,28,52,.12)}
+  .side-brand{display:flex;align-items:center;gap:10px;padding:4px 8px 16px;border-bottom:1px solid rgba(255,255,255,.10)}
+  .side-brand img{width:47px;height:47px;object-fit:contain;border-radius:11px;background:#fff;padding:4px}
+  .side-brand strong{display:block;font:800 25px var(--f-display);letter-spacing:.4px}.side-brand span{display:block;font-size:9px;line-height:1.25;color:#BBD3EA;margin-top:1px}
+  .side-caption{font-size:9px;font-weight:800;letter-spacing:1.2px;color:#70C8FF;padding:18px 10px 8px}
+  .side-nav{display:flex;flex-direction:column;gap:6px}.side-link{width:100%;border:0;background:transparent;color:#D9E8F5;text-align:left;border-radius:10px;padding:11px 12px;display:grid;grid-template-columns:23px 1fr 15px;align-items:center;font:600 12px var(--f-cuerpo);cursor:pointer;transition:.16s}.side-link span{font-size:16px;text-align:center}.side-link b{opacity:.45;font-size:16px}.side-link:hover{background:rgba(255,255,255,.08);color:#fff}.side-link.active{background:linear-gradient(135deg,#0D7FE0,#168FEF);color:#fff;box-shadow:0 8px 20px rgba(13,127,224,.28)}.side-link.active b{opacity:.9}
+  .side-period{margin-top:auto;border:1px solid rgba(76,178,255,.55);background:rgba(7,51,94,.75);border-radius:11px;padding:10px 12px;position:relative}.side-period .side-small{display:block;font-size:8px;letter-spacing:.8px;color:#A8C9E4;font-weight:700}.side-period strong{display:block;font:800 14px var(--f-display);margin-top:3px}.side-chevron{position:absolute;right:12px;top:24px;color:#BFE1FA}.side-quote{font-size:10px;line-height:1.5;color:#C5D9EA;font-style:italic;padding:18px 10px 7px}.side-wave{height:35px;margin:0 8px;background:linear-gradient(135deg,transparent 0 44%,rgba(88,177,232,.18) 45% 48%,transparent 49%),linear-gradient(20deg,transparent 0 60%,rgba(255,255,255,.08) 61% 63%,transparent 64%);opacity:.8}.side-footer{text-align:center;font-size:8px;color:#A8C5DB;line-height:1.5;margin-top:4px}.side-footer span{color:#6FB8E6}
+  header{position:sticky;top:0;margin-left:248px;background:#fff;color:var(--texto);padding:12px 24px;border-bottom:1px solid #DCE7F0;box-shadow:0 4px 18px rgba(14,53,86,.06);z-index:20;min-height:74px}header::after{display:none}.brand{display:none}.header-derecha{margin-left:auto}.bloque-fechas{background:#F7FAFD;border:1px solid #D9E5EF;color:#31536B}.bloque-fechas .f1{color:#173D5E}.bloque-fechas .f2{color:#6B8192}.badge-estado{background:#EFFAF5;border-color:#A7E7CA;color:#13805B}.btn-print{background:#0B3A63}.btn-print:hover{background:#0F6CBD}
+  .topbar-title{display:flex;align-items:center;gap:11px}.topbar-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(145deg,#E8F5FF,#D8ECFC);color:#0F78D1;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}.topbar-kicker{font-size:8px;font-weight:800;letter-spacing:1.1px;color:#1687E8}.topbar-title h1{font:800 20px var(--f-display);color:#0B3154;margin:0}.topbar-title p{font-size:10px;color:#6B8192;margin-top:2px}
+  .wrap{margin-left:248px;max-width:none;padding:18px 22px 34px}.screen-heading{display:none}
+  .kpis{gap:12px}.kpi{border:1px solid #D8E4EE;border-top:0;color:#fff;min-height:110px;padding:18px 52px 16px 20px;overflow:hidden;box-shadow:0 8px 22px rgba(10,49,84,.10)}.kpi::after{content:'';position:absolute;right:-18px;bottom:-22px;width:100px;height:100px;border-radius:28px;background:rgba(255,255,255,.10);transform:rotate(18deg)}.kpi .klabel{color:rgba(255,255,255,.88);font-size:9px}.kpi .kval{color:#fff;font-size:29px}.kpi .ksub{color:rgba(255,255,255,.78);font-size:9px}.kpi .kicon{background:rgba(255,255,255,.20)!important;color:#fff;z-index:2}.kpi.k1,.kpi:not(.k2):not(.k3):not(.k4){background:linear-gradient(135deg,#0D74E8,#168FF2)}.kpi.k2{background:linear-gradient(135deg,#0BAF8D,#20C8A1)}.kpi.k3{background:linear-gradient(135deg,#6345D9,#7B5CEB)}.kpi.k4{background:linear-gradient(135deg,#F28A0A,#FF9F1C)}#kpiCards2{display:none}
+  .card{border:1px solid #D7E3ED;box-shadow:0 5px 18px rgba(14,53,86,.045);background:#fff}.analytics-card{padding:14px 16px;background:#fff}.analytics-head{margin-bottom:10px;padding-bottom:10px}.analytics-eyebrow{color:#1687E8}.analytics-title{font-size:16px}.analytics-selection{background:#F3F8FC}.mini-nav{margin:0 0 9px;background:#EEF4F9;border-color:#D8E5EF}.mini-tab{padding:7px 15px}.mini-tab.active{background:linear-gradient(135deg,#0B3A63,#0F6CBD)}
+  .hero-chart{padding:12px 13px!important;min-height:285px!important}.hero-chart canvas{height:225px!important;max-height:225px!important}.chart-head-row{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.chart-subtitle{font-size:9px;color:#8091A0;margin-top:-4px}.chart-legend{display:flex;gap:14px;font-size:9px;color:#6C8191;white-space:nowrap}.chart-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1687E8;margin-right:4px}.chart-legend .area-key i{border-radius:2px;background:#CFE7FA}.compact-grid-2 .chartbox{background:#FBFDFF;border-color:#DDE8F0}.chartbox-titulo{color:#31536B}
+  .card.soft{background:#fff}.tabs{margin-bottom:0}.tab.active{background:#0B3A63}
+  @media(max-width:1050px){.app-sidebar{width:210px}.wrap{margin-left:210px}header{margin-left:210px}.side-brand strong{font-size:21px}}
+  @media(max-width:800px){.app-sidebar{position:relative;width:100%;height:auto;min-height:0;padding:10px;display:block}.side-brand{padding-bottom:9px}.side-nav{display:grid;grid-template-columns:repeat(2,1fr)}.side-period,.side-quote,.side-wave,.side-footer,.side-caption{display:none}header{margin-left:0}.wrap{margin-left:0;padding:12px}.topbar-title h1{font-size:16px}.topbar-icon{display:none}.header-derecha{width:100%}.kpis{grid-template-columns:1fr 1fr}.kpi{min-height:100px}.chart-head-row{flex-direction:column}.chart-legend{display:none}}
+  @media print{.app-sidebar,.topbar-title,.mini-nav,.card.soft.no-print{display:none!important}header{margin-left:0;background:#fff;color:#000;position:static;box-shadow:none;border:0}.wrap{margin-left:0;padding:0}.kpis{display:grid}.kpi{color:#111;background:#fff!important;border:1px solid #CBD5E1;box-shadow:none}.kpi .klabel,.kpi .ksub,.kpi .kval{color:#111}.analytics-card{display:block!important;box-shadow:none;border:1px solid #CBD5E1}.analytics-card .analytics-head{display:flex}.analytics-card #paneResumen{display:block!important}.analytics-card #paneDetalle{display:none!important}.hero-chart{min-height:250px!important}.hero-chart canvas{height:190px!important;max-height:190px!important}.card{break-inside:avoid}.scroll{overflow:visible!important}}
+
 </style>
 </head>
 
 <body>
 
+<aside class="app-sidebar no-print" id="appSidebar">
+  <div class="side-brand">
+    <img src="logo.png" alt="USPP">
+    <div><strong>USPP</strong><span>Unidad de Seguros<br>Públicos y Privados</span></div>
+  </div>
+  <div class="side-caption">RED DE SALUD SATIPO</div>
+  <nav class="side-nav">
+    <button class="side-link active" data-side="produccion"><span>▥</span> Producción <b>›</b></button>
+    <button class="side-link" data-side="personal"><span>♙</span> Personal <b>›</b></button>
+    <button class="side-link" data-side="eess"><span>▦</span> Establecimientos <b>›</b></button>
+    <button class="side-link" data-side="ranking"><span>★</span> Ranking <b>›</b></button>
+    <button class="side-link" data-side="reportes"><span>▤</span> Reportes <b>›</b></button>
+  </nav>
+  <div class="side-period"><span class="side-small">PERÍODO DE ANÁLISIS</span><strong id="sidePeriod">—</strong><span class="side-chevron">⌄</span></div>
+  <div class="side-quote">“Mejores datos,<br>mejores decisiones,<br>mejor salud para todos”</div>
+  <div class="side-wave"></div>
+  <div class="side-footer">USPP · Red de Salud Satipo<br><span>Panel de producción</span></div>
+</aside>
+
 <!-- ═══════════════════════════════
      HEADER
 ═══════════════════════════════ -->
 <header>
+  <div class="topbar-title no-print"><div class="topbar-icon">↗</div><div><div class="topbar-kicker">USPP · RED DE SALUD SATIPO</div><h1>Producción del personal de salud</h1><p id="topbarSub">Seguimiento mensual · toda la red</p></div></div>
   <div class="brand">
     <img src="logo.png" alt="USPP Satipo" id="logoImg"
          onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex'">
@@ -774,27 +816,27 @@
   <div class="kpis no-print" id="kpiCards">
     <div class="kpi">
       <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="13" height="13" rx="2"/><line x1="2.5" y1="7" x2="15.5" y2="7"/><line x1="6" y1="10.3" x2="9" y2="10.3"/></svg></div>
-      <div class="klabel">Total registros</div>
+      <div class="klabel">FUAs DEL PERÍODO</div>
       <div class="kval skeleton" id="kpiTotal" data-raw-val="0">00</div>
-      <div class="ksub" id="kpiTotalSub">Mes seleccionado</div>
+      <div class="ksub" id="kpiTotalSub">Según filtros</div>
     </div>
     <div class="kpi k2">
       <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="3"/><path d="M3.5 15.5c0-3.3 2.5-5.3 5.5-5.3s5.5 2 5.5 5.3"/></svg></div>
-      <div class="klabel">Profesionales activos</div>
+      <div class="klabel">DÍAS CON PRODUCCIÓN</div>
       <div class="kval skeleton" id="kpiProfs" data-raw-val="0">00</div>
-      <div class="ksub">Con producción</div>
+      <div class="ksub">Días del período</div>
     </div>
     <div class="kpi k3">
       <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="10" height="13" rx="1"/><line x1="9" y1="6.5" x2="9" y2="10.5"/><line x1="7" y1="8.5" x2="11" y2="8.5"/><line x1="4" y1="16" x2="14" y2="16"/></svg></div>
-      <div class="klabel">Establecimientos</div>
+      <div class="klabel">PROMEDIO / DÍA ACTIVO</div>
       <div class="kval skeleton" id="kpiEESS" data-raw-val="0">00</div>
-      <div class="ksub">Con producción</div>
+      <div class="ksub">FUAs por día activo</div>
     </div>
     <div class="kpi k4">
       <div class="kicon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="15" x2="3" y2="9"/><line x1="9" y1="15" x2="9" y2="5"/><line x1="15" y1="15" x2="15" y2="11"/></svg></div>
-      <div class="klabel">Promedio diario</div>
+      <div class="klabel">DÍA PICO</div>
       <div class="kval skeleton" id="kpiProm" data-raw-val="0">00</div>
-      <div class="ksub">Registros / día</div>
+      <div class="ksub" id="kpiPicoSub">Mayor producción del período</div>
     </div>
   </div>
 
@@ -900,19 +942,17 @@
 
     <div class="analytics-pane active" id="paneResumen">
       <div class="summary-chart">
-        <div class="chartbox chartbox-wide">
-          <div class="chartbox-titulo">Producción diaria de FUAs · tendencia del período</div>
+        <div class="chartbox chartbox-wide hero-chart">
+          <div class="chart-head-row"><div><div class="chartbox-titulo">Producción diaria de FUAs</div><div class="chart-subtitle">Evolución de la producción durante el período seleccionado</div></div><div class="chart-legend"><span><i></i> FUAs por día</span><span class="area-key"><i></i> Área de producción</span></div></div>
           <canvas id="c_dia"></canvas>
         </div>
-      </div>
-      <div class="compact-grid-2">
-        <div class="chartbox"><div class="chartbox-titulo">Top establecimientos</div><canvas id="c_eess"></canvas></div>
-        <div class="chartbox"><div class="chartbox-titulo">Distribución por tipo profesional</div><canvas id="c_tipo"></canvas></div>
       </div>
     </div>
 
     <div class="analytics-pane" id="paneDetalle">
       <div class="compact-grid-2">
+        <div class="chartbox"><div class="chartbox-titulo">Top establecimientos</div><canvas id="c_eess"></canvas></div>
+        <div class="chartbox"><div class="chartbox-titulo">Distribución por tipo profesional</div><canvas id="c_tipo"></canvas></div>
         <div class="chartbox"><div class="chartbox-titulo">Producción acumulada</div><canvas id="c_acum"></canvas></div>
         <div class="chartbox"><div class="chartbox-titulo">Distribución por establecimiento</div><canvas id="c_eess_mix"></canvas></div>
         <div class="chartbox"><div class="chartbox-titulo">Top servicios / prestaciones</div><canvas id="c_servicios"></canvas></div>
@@ -1174,6 +1214,18 @@ function setMiniPanel(panel){
 }
 document.querySelectorAll(".mini-tab").forEach(b=>b.addEventListener("click",()=>setMiniPanel(b.dataset.panel)));
 
+
+// Navegación lateral compacta
+document.querySelectorAll(".side-link").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".side-link").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
+  const key=btn.dataset.side;
+  if(key==="produccion"){setMiniPanel("resumen"); document.getElementById("cardAnalitica")?.scrollIntoView({behavior:"smooth",block:"start"});}
+  if(key==="personal"){document.getElementById("tabPersonal")?.click(); document.getElementById("cardPersonal")?.scrollIntoView({behavior:"smooth",block:"start"});}
+  if(key==="eess"){document.getElementById("tabEESS")?.click(); document.getElementById("cardEESS")?.scrollIntoView({behavior:"smooth",block:"start"});}
+  if(key==="ranking"){document.getElementById("tabRanking")?.click(); document.getElementById("cardRanking")?.scrollIntoView({behavior:"smooth",block:"start"});}
+  if(key==="reportes"){setMiniPanel("historico"); document.getElementById("cardReporteAnual")?.scrollIntoView({behavior:"smooth",block:"start"});}
+}));
+
 $("btn").onclick = ()=>render();
 $("btnReset").onclick = ()=>{
   $("estab").value=""; $("tipo").value="";
@@ -1263,42 +1315,37 @@ $("btnCargarAnio").onclick = async ()=>{
   renderTotalesPorAnios();
 };
 
-function mostrarErrorDatos(msg){
-  const box=document.getElementById("estado");
-  if(box){
-    box.innerHTML=`<strong style="color:#B42318">No se pudieron cargar los datos.</strong><br><span style="font-size:12px">${esc(String(msg))}</span><br><small>Verifica que la carpeta <b>data/</b> esté publicada junto a index.html en GitHub Pages.</small>`;
-    box.style.color="#B42318";
-    box.style.background="#FFF5F5";
-    box.style.border="1px solid #F3B4B4";
-    box.style.padding="10px 12px";
-    box.style.borderRadius="10px";
-  }
+/* ══════════════════════════════════════════
+   GITHUB PAGES / CARGA ROBUSTA DE DATOS
+   Las rutas se resuelven respecto al index.html,
+   incluso cuando el repositorio está publicado
+   bajo /NOMBRE-DEL-REPOSITORIO/.
+══════════════════════════════════════════ */
+const APP_BASE_URL = new URL(".", document.baseURI);
+function assetURL(path){ return new URL(path, APP_BASE_URL).href; }
+async function getJSON(path, label=path){
+  const url = assetURL(path) + (path.includes("?") ? "&" : "?") + "v=" + Date.now();
+  const r = await fetch(url, {cache:"no-store", credentials:"same-origin"});
+  if(!r.ok) throw new Error(`${label}: HTTP ${r.status} — ${url}`);
+  const text = await r.text();
+  try { return JSON.parse(text); }
+  catch(e){ throw new Error(`${label}: respuesta no válida (no es JSON)`); }
 }
 
 /* ══════════════════════════════════════════
    CARGA MANIFEST + AUTO
 ══════════════════════════════════════════ */
 async function cargarManifestYAuto(){
-  // GitHub Pages: construir URLs desde la ubicación real del index.
-  // Esto funciona tanto en / como en /repositorio/.
-  const dataUrl = (name) => new URL("data/" + name, document.baseURI).href + (name.includes("?") ? "&" : "?") + "ts=" + Date.now();
+  try{
+  let m;
   try {
-    const r = await fetch(dataUrl("manifest.json"), {cache:"no-store"});
-    if(!r.ok) throw new Error(`No se pudo cargar data/manifest.json (HTTP ${r.status})`);
-    const raw = await r.json();
-    const disponibles = Array.isArray(raw.disponibles) ? raw.disponibles.map(x => ({
-      anio: Number(x.anio ?? x.year),
-      mes: Number(x.mes ?? x.month)
-    })).filter(x => Number.isFinite(x.anio) && Number.isFinite(x.mes)) : [];
-    if(!disponibles.length) throw new Error("manifest.json no contiene meses disponibles válidos");
-    const ultimoRaw = raw.ultimo || disponibles[disponibles.length - 1];
-    const ultimo = { anio:Number(ultimoRaw.anio ?? ultimoRaw.year), mes:Number(ultimoRaw.mes ?? ultimoRaw.month) };
-    MANIFEST = {...raw, disponibles, ultimo};
-  } catch (err) {
-    console.error("[USPP Satipo] Error cargando manifest:", err);
-    mostrarErrorDatos(err.message || String(err));
-    return;
+    m = await getJSON("data/manifest.json", "data/manifest.json");
+  } catch(primaryErr) {
+    // Respaldo por si el manifest de data fue movido o GitHub aún conserva una versión antigua.
+    m = await getJSON("manifest.json", "manifest.json");
   }
+  if(!m || !Array.isArray(m.disponibles)) throw new Error("manifest.json no contiene la lista 'disponibles'");
+  MANIFEST = m;
 
   /* ── Fechas en el header ── */
   const ahora = new Date();
@@ -1332,13 +1379,25 @@ async function cargarManifestYAuto(){
     await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
   });
 
-  $("anio").value = m.ultimo.anio;
+  // Vista inicial recomendada: septiembre 2026, el período de referencia del tablero.
+  const periodoInicial = m.disponibles.some(x=>x.anio===2026 && x.mes===9) ? {anio:2026,mes:9} : m.ultimo;
+  $("anio").value = periodoInicial.anio;
   fillMes();
-  $("mes").value = m.ultimo.mes;
+  $("mes").value = periodoInicial.mes;
 
   await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
   await cargarAnio(); await cargarTotalesPorAnios();
   renderAnual(); renderTotalesPorAnios();
+  }catch(err){
+    console.error("Error cargando dashboard Satipo:", err);
+    const msg = err?.message || String(err);
+    $("estado").textContent = location.protocol === "file:"
+      ? "Para GitHub Pages publica la carpeta completa con /data. En local usa un servidor."
+      : `Error de datos: ${msg}`;
+    const box=document.getElementById("estado");
+    if(box){ box.title=msg; box.style.color="#B91C1C"; }
+    document.querySelectorAll(".kval").forEach(el=>el.classList.remove("skeleton"));
+  }
 }
 
 /* ══════════════════════════════════════════
@@ -1349,12 +1408,9 @@ async function cargarMes(){
   const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
   $("estado").textContent=`Cargando ${anio}-${String(mes).padStart(2,"0")}…`;
   mostrarEsqueletoKPIs();
-  const url = new URL(file, document.baseURI).href + "?ts=" + Date.now();
-  const r=await fetch(url, {cache:"no-store"});
-  if(!r.ok) throw new Error(`No se pudo cargar ${file} (HTTP ${r.status})`);
-  const json=await r.json();
-  if(!Array.isArray(json)) throw new Error(`${file} no contiene un arreglo de registros`);
-  BASE=json;
+  const d = await getJSON(file, file);
+  if(!Array.isArray(d)) throw new Error(`${file}: el archivo debe contener un arreglo JSON`);
+  BASE=d;
   for(const x of BASE) x.dni_prof=canonDNI(x.dni_prof);
   $("estado").textContent=`Base lista: ${BASE.length.toLocaleString()} registros (${anio}-${String(mes).padStart(2,"0")})`;
 }
@@ -1372,8 +1428,8 @@ async function cargarMesAnterior(){
   if(!existe) return;
   const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
   try{
-    const r=await fetch(file+"?ts="+Date.now());
-    const d=await r.json();
+    const d=await getJSON(file, file);
+    if(!Array.isArray(d)) throw new Error(`${file}: el archivo debe contener un arreglo JSON`);
     for(const x of d) x.dni_prof=canonDNI(x.dni_prof);
     PREV_BASE = Array.isArray(d) ? d : [];
   }catch(e){ PREV_BASE = []; }
@@ -1391,8 +1447,8 @@ async function cargarAnio(forzar=false){
   const tot={};
   for(const mes of meses){
     const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
-    try{ const r=await fetch(file+"?ts="+Date.now()); const d=await r.json(); tot[mes]=Array.isArray(d)?d.length:0; }
-    catch(e){ tot[mes]=0; }
+    try{ const d=await getJSON(file, file); tot[mes]=Array.isArray(d)?d.length:0; }
+    catch(e){ console.warn(e); tot[mes]=0; }
   }
   YEAR_CACHE.set(anio,tot);
   $("estado").textContent=`Año ${anio} cargado`;
@@ -1434,7 +1490,7 @@ async function cargarTotalesPorAnios(forzar=false){
     let total=0;
     for(const mes of meses){
       const file=`data/base_${y}_${String(mes).padStart(2,"0")}.json`;
-      try{ const r=await fetch(file+"?ts="+Date.now()); const d=await r.json(); total+=Array.isArray(d)?d.length:0; }catch(e){}
+      try{ const d=await getJSON(file, file); total+=Array.isArray(d)?d.length:0; }catch(e){ console.warn(e); }
     }
     YEARS_TOTAL_CACHE.set(y,total);
   }
@@ -1531,6 +1587,8 @@ function render(){
   $("printSub").textContent=filtrosTexto();
   const periodoTxt = `${MONTHS.find(x=>x.n===Number($("mes").value))?.t||$("mes").value} ${$("anio").value}`;
   if($("screenPeriod")) $("screenPeriod").textContent = periodoTxt;
+  if($("sidePeriod")) $("sidePeriod").textContent = periodoTxt;
+  if($("topbarSub")) $("topbarSub").textContent = `${periodoTxt} · seguimiento de producción y rendimiento`;
   $("printFechas").textContent=$("fechaActualizacion").textContent+" | "+$("fechaDigitacion").textContent;
   actualizarBannerFiltro();
   const d=aplicarFiltros();
@@ -1637,10 +1695,16 @@ function actualizarAnilloCumplimiento(pct){
 /* ── KPIs dinámicos ── */
 function actualizarKPIs(d, nDias){
   animateNumber($("kpiTotal"), d.length);
-  animateNumber($("kpiProfs"), new Set(d.map(x=>x.profesional).filter(Boolean)).size);
-  animateNumber($("kpiEESS"), new Set(d.map(x=>x.establecimiento).filter(Boolean)).size);
-  const prom = nDias>0 ? Math.round(d.length/nDias) : 0;
-  animateNumber($("kpiProm"), prom);
+  const diasActivos = new Set(d.map(x=>String(x.dia||String(x.fecha||"").slice(8,10))).filter(Boolean)).size;
+  const promActivo = diasActivos>0 ? Math.round(d.length/diasActivos) : 0;
+  const byDay = new Map();
+  for(const x of d){ const day=Number(x.dia||String(x.fecha||"").slice(8,10)); if(day) byDay.set(day,(byDay.get(day)||0)+1); }
+  let picoDia="—", picoVal=0;
+  for(const [day,val] of byDay){ if(val>picoVal){picoVal=val;picoDia=day;} }
+  animateNumber($("kpiProfs"), diasActivos);
+  animateNumber($("kpiEESS"), promActivo);
+  animateNumber($("kpiProm"), picoVal);
+  if($("kpiPicoSub")) $("kpiPicoSub").textContent = picoVal ? `Día ${picoDia} · ${picoVal.toLocaleString()} FUAs` : "Sin producción";
 }
 
 /* ── KPIs de cumplimiento / alertas / tendencia ── */
@@ -2059,10 +2123,7 @@ window.addEventListener("afterprint",()=>{
 /* ══════════════════════════════════════════
    INICIO
 ══════════════════════════════════════════ */
-cargarManifestYAuto().catch(err=>{
-  console.error("[USPP Satipo] Error de inicio:", err);
-  mostrarErrorDatos(err.message || String(err));
-});
+cargarManifestYAuto();
 </script>
 </body>
 </html>
