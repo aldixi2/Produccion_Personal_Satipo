@@ -1,16 +1,21 @@
 PRODUCCIÓN DEL PERSONAL DE SALUD — RED DE SALUD SATIPO
+DISEÑO COMPACTO ANTERIOR 2 + DATOS CORREGIDOS PARA GITHUB PAGES
 
-VERSIÓN GITHUB PAGES
+ESTRUCTURA OBLIGATORIA EN GITHUB:
+  index.html
+  data/
+    manifest.json
+    base_2023_06.json
+    ...
+    base_2026_10.json
 
-1. Sube TODA esta carpeta a tu repositorio.
-2. El archivo principal es index.html.
-3. Conserva la carpeta data/ completa.
-4. No cambies los nombres de los archivos JSON.
-5. GitHub Pages debe publicar desde la rama/carpeta donde está index.html.
-6. No necesitas XAMPP, PHP ni INICIAR_DASHBOARD.bat para GitHub Pages.
-
-La carga de datos usa rutas relativas al index.html y cache no-store.
-El dashboard carga inicialmente SET 26 cuando está disponible.
-
-Si aparece "Error de datos" en la barra de estado, ese mensaje indica exactamente
-qué archivo o ruta no pudo cargar.
+IMPORTANTE:
+1. Sube TODO el contenido de esta carpeta al repositorio.
+2. index.html debe quedar en la raíz de la carpeta publicada por GitHub Pages.
+3. La carpeta data debe quedar al mismo nivel que index.html.
+4. No necesitas XAMPP, PHP ni el archivo .bat para GitHub Pages.
+5. El dashboard carga primero data/manifest.json y usa rutas relativas compatibles con repositorios tipo:
+   https://usuario.github.io/repositorio/
+6. Si un archivo no carga, abajo del dashboard aparecerá "Error de datos" con la URL y el código HTTP.
+7. Los datos no se eliminan ni se inventan: se mantienen los JSON del proyecto.
+8. El diseño corresponde a la versión compacta anterior 2, con menos scroll y vistas de resumen/análisis/histórico.
