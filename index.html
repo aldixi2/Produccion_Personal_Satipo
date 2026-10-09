@@ -1263,35 +1263,42 @@ $("btnCargarAnio").onclick = async ()=>{
   renderTotalesPorAnios();
 };
 
+function mostrarErrorDatos(msg){
+  const box=document.getElementById("estado");
+  if(box){
+    box.innerHTML=`<strong style="color:#B42318">No se pudieron cargar los datos.</strong><br><span style="font-size:12px">${esc(String(msg))}</span><br><small>Verifica que la carpeta <b>data/</b> esté publicada junto a index.html en GitHub Pages.</small>`;
+    box.style.color="#B42318";
+    box.style.background="#FFF5F5";
+    box.style.border="1px solid #F3B4B4";
+    box.style.padding="10px 12px";
+    box.style.borderRadius="10px";
+  }
+}
+
 /* ══════════════════════════════════════════
    CARGA MANIFEST + AUTO
 ══════════════════════════════════════════ */
-const APP_BASE_URL = new URL(".", document.baseURI);
-function assetURL(path){ return new URL(path, APP_BASE_URL).href; }
-async function getJSON(path, label=path){
-  const url = assetURL(path) + (path.includes("?") ? "&" : "?") + "v=" + Date.now();
-  const r = await fetch(url, {cache:"no-store", credentials:"same-origin"});
-  if(!r.ok) throw new Error(`${label}: HTTP ${r.status} — ${url}`);
-  const text = await r.text();
-  try { return JSON.parse(text); }
-  catch(e){ throw new Error(`${label}: la respuesta no es JSON — ${url}`); }
-}
-
 async function cargarManifestYAuto(){
-  let m;
+  // GitHub Pages: construir URLs desde la ubicación real del index.
+  // Esto funciona tanto en / como en /repositorio/.
+  const dataUrl = (name) => new URL("data/" + name, document.baseURI).href + (name.includes("?") ? "&" : "?") + "ts=" + Date.now();
   try {
-    m = await getJSON("data/manifest.json", "data/manifest.json");
-  } catch(e1) {
-    try {
-      m = await getJSON("manifest.json", "manifest.json");
-    } catch(e2) {
-      throw new Error(`No se pudo cargar el manifiesto. ${e1.message}`);
-    }
+    const r = await fetch(dataUrl("manifest.json"), {cache:"no-store"});
+    if(!r.ok) throw new Error(`No se pudo cargar data/manifest.json (HTTP ${r.status})`);
+    const raw = await r.json();
+    const disponibles = Array.isArray(raw.disponibles) ? raw.disponibles.map(x => ({
+      anio: Number(x.anio ?? x.year),
+      mes: Number(x.mes ?? x.month)
+    })).filter(x => Number.isFinite(x.anio) && Number.isFinite(x.mes)) : [];
+    if(!disponibles.length) throw new Error("manifest.json no contiene meses disponibles válidos");
+    const ultimoRaw = raw.ultimo || disponibles[disponibles.length - 1];
+    const ultimo = { anio:Number(ultimoRaw.anio ?? ultimoRaw.year), mes:Number(ultimoRaw.mes ?? ultimoRaw.month) };
+    MANIFEST = {...raw, disponibles, ultimo};
+  } catch (err) {
+    console.error("[USPP Satipo] Error cargando manifest:", err);
+    mostrarErrorDatos(err.message || String(err));
+    return;
   }
-  if(!m || !Array.isArray(m.disponibles) || !m.ultimo){
-    throw new Error("manifest.json no contiene 'disponibles' y 'ultimo'");
-  }
-  MANIFEST = m;
 
   /* ── Fechas en el header ── */
   const ahora = new Date();
@@ -1299,16 +1306,16 @@ async function cargarManifestYAuto(){
   const fechaAhora = `${pad(ahora.getDate())}/${pad(ahora.getMonth()+1)}/${ahora.getFullYear()} `
     + `${ahora.getHours()%12||12}:${pad(ahora.getMinutes())} ${ahora.getHours()>=12?"PM":"AM"}`;
   $("fechaActualizacion").textContent = `Actualizado: ${fechaAhora}`;
-  $("fechaDigitacion").textContent    = `Fecha de digitación al: ${formatFecha(m.generado||"")}`;
-  $("printFechaFooter").textContent   = `Actualizado: ${fechaAhora} | Digitación al: ${formatFecha(m.generado||"")}`;
+  $("fechaDigitacion").textContent    = `Fecha de digitación al: ${formatFecha(MANIFEST.generado||"")}`;
+  $("printFechaFooter").textContent   = `Actualizado: ${fechaAhora} | Digitación al: ${formatFecha(MANIFEST.generado||"")}`;
 
   /* ── Selects año/mes ── */
-  const years = [...new Set(m.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
+  const years = [...new Set(MANIFEST.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
   $("anio").innerHTML = years.map(y=>`<option value="${y}">${y}</option>`).join("");
 
   const fillMes = ()=>{
     const y = Number($("anio").value);
-    const ms = m.disponibles.filter(x=>x.anio===y).map(x=>x.mes).sort((a,b)=>a-b);
+    const ms = MANIFEST.disponibles.filter(x=>x.anio===y).map(x=>x.mes).sort((a,b)=>a-b);
     $("mes").innerHTML = ms.map(mm=>{
       const name=MONTHS.find(k=>k.n===mm)?.t||mm;
       return `<option value="${mm}">${name}</option>`;
@@ -1325,9 +1332,22 @@ async function cargarManifestYAuto(){
     await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
   });
 
-  $("anio").value = m.ultimo.anio;
+  // Por defecto mostrar el último mes cerrado cuando el manifiesto incluye
+  // el mes en curso con una carga parcial (por ejemplo, octubre con pocos registros).
+  let anioInicial = Number(MANIFEST.ultimo.anio);
+  let mesInicial = Number(MANIFEST.ultimo.mes);
+  const hoy = new Date();
+  if (anioInicial === hoy.getFullYear() && mesInicial === hoy.getMonth() + 1) {
+    mesInicial -= 1;
+    if (mesInicial < 1) { mesInicial = 12; anioInicial -= 1; }
+  }
+  if (!MANIFEST.disponibles.some(x => x.anio === anioInicial && x.mes === mesInicial)) {
+    anioInicial = Number(MANIFEST.ultimo.anio);
+    mesInicial = Number(MANIFEST.ultimo.mes);
+  }
+  $("anio").value = anioInicial;
   fillMes();
-  $("mes").value = m.ultimo.mes;
+  $("mes").value = mesInicial;
 
   await cargarMes(); await cargarMesAnterior(); refreshCascada(); render();
   await cargarAnio(); await cargarTotalesPorAnios();
@@ -1342,9 +1362,12 @@ async function cargarMes(){
   const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
   $("estado").textContent=`Cargando ${anio}-${String(mes).padStart(2,"0")}…`;
   mostrarEsqueletoKPIs();
-  const d=await getJSON(file, file);
-  if(!Array.isArray(d)) throw new Error(`${file}: el archivo no contiene una lista de registros`);
-  BASE=d;
+  const url = new URL(file, document.baseURI).href + "?ts=" + Date.now();
+  const r=await fetch(url, {cache:"no-store"});
+  if(!r.ok) throw new Error(`No se pudo cargar ${file} (HTTP ${r.status})`);
+  const json=await r.json();
+  if(!Array.isArray(json)) throw new Error(`${file} no contiene un arreglo de registros`);
+  BASE=json;
   for(const x of BASE) x.dni_prof=canonDNI(x.dni_prof);
   $("estado").textContent=`Base lista: ${BASE.length.toLocaleString()} registros (${anio}-${String(mes).padStart(2,"0")})`;
 }
@@ -1362,8 +1385,8 @@ async function cargarMesAnterior(){
   if(!existe) return;
   const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
   try{
-    const d=await getJSON(file, file);
-    if(!Array.isArray(d)) throw new Error(`${file}: formato inválido`);
+    const r=await fetch(file+"?ts="+Date.now());
+    const d=await r.json();
     for(const x of d) x.dni_prof=canonDNI(x.dni_prof);
     PREV_BASE = Array.isArray(d) ? d : [];
   }catch(e){ PREV_BASE = []; }
@@ -1381,15 +1404,14 @@ async function cargarAnio(forzar=false){
   const tot={};
   for(const mes of meses){
     const file=`data/base_${anio}_${String(mes).padStart(2,"0")}.json`;
-    try{ const d=await getJSON(file, file); tot[mes]=Array.isArray(d)?d.length:0; }
-    catch(e){ tot[mes]=0; console.warn(e); }
+    try{ const r=await fetch(file+"?ts="+Date.now()); const d=await r.json(); tot[mes]=Array.isArray(d)?d.length:0; }
+    catch(e){ tot[mes]=0; }
   }
   YEAR_CACHE.set(anio,tot);
   $("estado").textContent=`Año ${anio} cargado`;
 }
 
 function renderAnual(){
-  if(!window.Chart){ console.warn("Chart.js no está disponible; se omite gráfico anual."); return; }
   const anio=Number($("anio").value);
   const tot=YEAR_CACHE.get(anio)||{};
   const labels=MONTHS.map(m=>m.t);
@@ -1425,7 +1447,7 @@ async function cargarTotalesPorAnios(forzar=false){
     let total=0;
     for(const mes of meses){
       const file=`data/base_${y}_${String(mes).padStart(2,"0")}.json`;
-      try{ const d=await getJSON(file, file); total+=Array.isArray(d)?d.length:0; }catch(e){ console.warn(e); }
+      try{ const r=await fetch(file+"?ts="+Date.now()); const d=await r.json(); total+=Array.isArray(d)?d.length:0; }catch(e){}
     }
     YEARS_TOTAL_CACHE.set(y,total);
   }
@@ -1434,7 +1456,6 @@ async function cargarTotalesPorAnios(forzar=false){
 
 function renderTotalesPorAnios(){
   if(!MANIFEST) return;
-  if(!window.Chart){ console.warn("Chart.js no está disponible; se omite gráfico por años."); return; }
   const years=[...new Set(MANIFEST.disponibles.map(x=>x.anio))].sort((a,b)=>a-b);
   const labels=years.map(String);
   const data=years.map(y=>Number(YEARS_TOTAL_CACHE.get(y)||0));
@@ -2052,14 +2073,8 @@ window.addEventListener("afterprint",()=>{
    INICIO
 ══════════════════════════════════════════ */
 cargarManifestYAuto().catch(err=>{
-  console.error(err);
-  const msg = `Error de datos: ${err?.message || err}`;
-  const el = $("estado");
-  if(el) {
-    el.textContent = msg;
-    el.style.color = "#B42318";
-    el.style.fontWeight = "700";
-  }
+  console.error("[USPP Satipo] Error de inicio:", err);
+  mostrarErrorDatos(err.message || String(err));
 });
 </script>
 </body>
