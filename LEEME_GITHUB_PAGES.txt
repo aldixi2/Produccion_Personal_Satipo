@@ -1,0 +1,8 @@
+PRODUCCIÓN SATIPO — TABLERO REPARADO
+
+1. Descomprime el ZIP.
+2. En tu repositorio GitHub Pages, sube TODO el contenido de la carpeta produccion-satipo a la raíz del repositorio (no subas la carpeta envolvente).
+3. Deben quedar index.html, data/manifest.json y data/base_YYYY_MM.json en el mismo nivel/estructura indicada.
+4. Espera la publicación y abre la página con Ctrl+F5.
+
+Este index nuevo no usa Chart.js ni librerías CDN para el gráfico; dibuja el gráfico en SVG para evitar dependencia externa. Lee data/manifest.json y carga el JSON del mes seleccionado. Por defecto selecciona el último mes cerrado disponible para evitar usar un mes actual parcial.
