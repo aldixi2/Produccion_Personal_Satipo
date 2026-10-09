@@ -1256,7 +1256,8 @@ $("profSearch").addEventListener("input",()=>{
   render();
 });
 
-$("btnCargarAnio").onclick = async ()=>{
+const btnCargarAnio = $("btnCargarAnio");
+if (btnCargarAnio) btnCargarAnio.onclick = async ()=>{
   await cargarAnio(true);
   await cargarTotalesPorAnios(true);
   renderAnual();
