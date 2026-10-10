@@ -101,6 +101,13 @@ button{cursor:pointer}
 .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
 .chartwrap{position:relative;padding:8px 14px 12px}
 #chart{display:block;width:100%;height:250px}
+.seg{display:inline-flex;border:1px solid #cfd3da;border-radius:10px;overflow:hidden;background:#fff}
+.seg button{border:0;background:none;padding:7px 14px;font-size:13px;font-weight:500;color:var(--ink2)}
+.seg button+button{border-left:1px solid #cfd3da}
+.seg button.on{background:var(--ink);color:#fff}
+.cmp{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);cursor:pointer}
+.cmp input{width:16px;height:16px;accent-color:var(--blue-d)}
+.legend.sub{padding:12px 20px 0}
 .tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:12.5px;padding:7px 11px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-110%);z-index:5;box-shadow:0 6px 18px #0003}
 .tip b{font-weight:600}
 
@@ -369,9 +376,13 @@ dialog .df{padding:14px 22px;border-top:1px solid var(--line2);display:flex;just
 
         <div class="panel" style="margin-bottom:16px">
           <div class="ph">
-            <div><h2>Producción diaria de FUAs</h2><p id="chartSub">Pasa el cursor sobre una barra para ver el detalle del día</p></div>
-            <div class="legend"><span><i style="background:var(--blue)"></i>Día de semana</span><span><i style="background:var(--amber)"></i>Sábado y domingo</span><span><i style="background:var(--red)"></i>Día pico</span></div>
+            <div><h2>Producción diaria de FUAs</h2><p id="chartSub">Pasa el cursor sobre el gráfico para ver el detalle del día</p></div>
+            <div class="tools">
+              <label class="cmp"><input type="checkbox" id="cmpChk"> Comparar con mes anterior</label>
+              <div class="seg" role="group" aria-label="Tipo de gráfico"><button data-ct="line">Línea</button><button data-ct="bar">Barras</button></div>
+            </div>
           </div>
+          <div class="legend sub" id="legend"></div>
           <div class="chartwrap" id="chartWrap"><svg id="chart" role="img" aria-label="Gráfico de producción diaria"></svg><div class="tip" id="tip" hidden></div></div>
         </div>
 
@@ -514,12 +525,12 @@ const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
 const norm=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
-const DEF={title:'Reporte de producción del personal de salud',responsable:'',cargo:'',low:5,high:20,ink:false,order:'eess',detail:false};
+const DEF={title:'Reporte de producción del personal de salud',responsable:'',cargo:'',low:5,high:20,ink:false,order:'eess',detail:false,chart:'line'};
 const cfg=Object.assign({},DEF,store.get('uspp.cfg',{}));
 const COL={low:'#CC3556',mid:'#EAA636',high:'#5291CC'};
 const PER=40;
 
-const S={manifest:null,year:0,month:0,dc:30,all:[],rows:[],view:'prod',f:{e:'',t:'',q:'',lv:'all'},sel:new Set(),sort:{key:'total',dir:-1},page:{prod:1,personal:1,ees:1},busy:false};
+const S={manifest:null,year:0,month:0,dc:30,all:[],rows:[],view:'prod',f:{e:'',t:'',q:'',lv:'all'},sel:new Set(),compare:false,prev:null,sort:{key:'total',dir:-1},page:{prod:1,personal:1,ees:1},busy:false};
 const cache=new Map();
 
 /* ---------- utilidades ---------- */
@@ -558,7 +569,28 @@ function buildRows(all,y,m){
   for(const r of rows){r.act=r.d.reduce((a,v)=>a+(v>0),0);let best='',bn=0;for(const [k,v] of r.sv)if(v>bn){bn=v;best=k}r.top=best}
   return rows;
 }
+async function fetchMonth(entry){
+  if(cache.has(entry.file))return cache.get(entry.file);
+  setProg(-1);
+  try{
+    const data=await fetchJSON('data/'+entry.file,(g,t)=>{if(t)setProg(g/t)});
+    if(!Array.isArray(data))throw new Error(entry.file+' no contiene una lista de registros.');
+    const o={all:data,rows:buildRows(data,entry.anio,entry.mes)};cache.set(entry.file,o);if(cache.size>4)cache.delete(cache.keys().next().value);return o;
+  }finally{setProg(null)}
+}
+async function ensurePrev(){
+  S.prev=null;
+  if(!S.compare){drawChart();return}
+  const y0=S.year,m0=S.month;let py=y0,pm=m0-1;if(pm<1){pm=12;py--}
+  const e=periods().find(p=>p.anio===py&&p.mes===pm);
+  const off=()=>{S.compare=false;$('cmpChk').checked=false;drawChart()};
+  if(!e){toast('No hay datos del mes anterior para comparar','err');off();return}
+  try{const d=await fetchMonth(e);if(S.year!==y0||S.month!==m0)return;S.prev={rows:d.rows,dc:new Date(py,pm,0).getDate(),label:`${MESES[pm-1]} ${py}`,short:`${MESES[pm-1].slice(0,3)}`}}
+  catch(err){console.error(err);toast('No se pudo cargar el mes anterior','err');off();return}
+  drawChart();
+}
 async function loadMonth(){
+  S.prev=null;
   const entry=S.manifest.disponibles.find(x=>x.anio===S.year&&x.mes===S.month);
   $('err').hidden=true;
   if(!entry){showErr('No existe archivo para '+periodTxt());return}
@@ -577,6 +609,7 @@ async function loadMonth(){
   S.dc=new Date(S.year,S.month,0).getDate();
   S.page={prod:1,personal:1,ees:1};
   fillFilterLists();render();
+  if(S.compare)ensurePrev();
 }
 function showErr(msg,e){
   const file=location.protocol==='file:';
@@ -663,28 +696,61 @@ const isWe=d=>{const w=dow(d);return w===0||w===6};
 let lastDays=[];
 function renderChart(base){lastDays=dayArr(base);drawChart()}
 function niceMax(v){if(v<=5)return 5;const p=Math.pow(10,Math.floor(Math.log10(v))),n=v/p;return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p}
+let lastPrev=null;
+function prevDaysArr(){
+  if(!S.compare||!S.prev)return null;
+  const a=new Array(S.prev.dc).fill(0);
+  S.prev.rows.forEach(r=>{if(passes(r))r.d.forEach((v,i)=>a[i]+=v)});return a;
+}
+function syncChartUI(){document.querySelectorAll('[data-ct]').forEach(b=>b.classList.toggle('on',b.dataset.ct===cfg.chart));$('cmpChk').checked=S.compare}
 function drawChart(){
   const svg=$('chart'),days=lastDays;if(!days.length)return;
-  const W=Math.max(320,$('chartWrap').clientWidth-28),H=250,L=44,R=12,T=14,B=38,pw=W-L-R,ph=H-T-B,max=niceMax(Math.max(...days,1)),band=pw/days.length,bw=Math.max(4,band*.66);
-  const y=v=>T+ph-v/max*ph,peak=Math.max(...days),act=days.filter(v=>v>0),avg=act.length?act.reduce((a,b)=>a+b,0)/act.length:0;
-  let s=`<g font-size="11" fill="#7b7d84">`;
+  const type=cfg.chart,prev=prevDaysArr();lastPrev=prev;
+  const W=Math.max(320,$('chartWrap').clientWidth-28),H=260,L=44,R=14,T=22,B=38,pw=W-L-R,ph=H-T-B;
+  const max=niceMax(Math.max(...days,...(prev||[0]),1)),band=pw/days.length,cx=i=>L+i*band+band/2,y=v=>T+ph-v/max*ph;
+  const peak=Math.max(...days),act=days.filter(v=>v>0),avg=act.length?act.reduce((a,b)=>a+b,0)/act.length:0;
+  let s=`<defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5291CC" stop-opacity=".38"/><stop offset="1" stop-color="#5291CC" stop-opacity=".02"/></linearGradient></defs>`;
+  if(type==='line')days.forEach((v,i)=>{if(isWe(i+1))s+=`<rect x="${L+i*band}" y="${T}" width="${band}" height="${ph}" fill="#EAA636" opacity=".13"/>`});
+  s+=`<g font-size="11" fill="#7b7d84">`;
   for(let i=0;i<=4;i++){const v=max*i/4,yy=y(v);s+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="#eceef2"/><text x="${L-8}" y="${yy+4}" text-anchor="end">${fmt(Math.round(v))}</text>`}
   s+='</g>';
   const step=band<20?(band<12?5:2):1;
-  days.forEach((v,i)=>{
-    const d=i+1,x=L+i*band+(band-bw)/2,h=Math.max(v?2:1,v/max*ph),col=!v?'#d5d8de':(v===peak?'#CC3556':isWe(d)?'#EAA636':'#5291CC');
-    s+=`<rect x="${x}" y="${T+ph-h}" width="${bw}" height="${h}" rx="${Math.min(4,bw/3)}" fill="${col}"/>`;
-    if(d%step===0||d===1)s+=`<text x="${L+i*band+band/2}" y="${H-20}" text-anchor="middle" font-size="11" fill="#383738" font-weight="500">${d}</text><text x="${L+i*band+band/2}" y="${H-7}" text-anchor="middle" font-size="9.5" fill="${isWe(d)?'#8F5B00':'#9a9da5'}">${DOW[dow(d)]}</text>`;
-    s+=`<rect data-i="${i}" x="${L+i*band}" y="${T}" width="${band}" height="${ph}" fill="transparent"/>`;
-  });
-  if(avg>0)s+=`<line x1="${L}" x2="${W-R}" y1="${y(avg)}" y2="${y(avg)}" stroke="#383738" stroke-dasharray="5 4" stroke-width="1.3"/><text x="${W-R-4}" y="${y(avg)-6}" text-anchor="end" font-size="11" font-weight="600" fill="#383738">Promedio ${fmt(Math.round(avg))}</text>`;
-  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('width',W);svg.innerHTML=s;
+  days.forEach((v,i)=>{const d=i+1;if(d%step===0||d===1)s+=`<text x="${cx(i)}" y="${H-20}" text-anchor="middle" font-size="11" fill="#383738" font-weight="500">${d}</text><text x="${cx(i)}" y="${H-7}" text-anchor="middle" font-size="9.5" fill="${isWe(d)?'#8F5B00':'#9a9da5'}">${DOW[dow(d)]}</text>`});
+  const colOf=(v,d)=>!v?'#d5d8de':(v===peak?'#CC3556':isWe(d)?'#EAA636':'#5291CC');
+  if(type==='bar'){
+    const bw=Math.max(4,band*.66);
+    days.forEach((v,i)=>{const h=Math.max(v?2:1,v/max*ph);s+=`<rect x="${cx(i)-bw/2}" y="${T+ph-h}" width="${bw}" height="${h}" rx="${Math.min(4,bw/3)}" fill="${colOf(v,i+1)}"/>`});
+  }else{
+    const pts=days.map((v,i)=>`${cx(i).toFixed(1)},${y(v).toFixed(1)}`);
+    s+=`<polygon points="${cx(0)},${T+ph} ${pts.join(' ')} ${cx(days.length-1)},${T+ph}" fill="url(#gA)"/>`;
+    s+=`<polyline points="${pts.join(' ')}" fill="none" stroke="#5291CC" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`;
+    days.forEach((v,i)=>{if(v||days.length<=31)s+=`<circle cx="${cx(i)}" cy="${y(v)}" r="${v===peak&&v?5:3.4}" fill="${colOf(v,i+1)}" stroke="#fff" stroke-width="1.6"/>`});
+    if(peak>0){const pi=days.indexOf(peak);s+=`<text x="${cx(pi)}" y="${y(peak)-10}" text-anchor="middle" font-size="11.5" font-weight="600" fill="#CC3556">${fmt(peak)}</text>`}
+  }
+  if(avg>0)s+=`<line x1="${L}" x2="${W-R}" y1="${y(avg)}" y2="${y(avg)}" stroke="#383738" stroke-dasharray="5 4" stroke-width="1.2" opacity=".75"/><text x="${W-R-4}" y="${y(avg)-6}" text-anchor="end" font-size="11" font-weight="600" fill="#383738">Promedio ${fmt(Math.round(avg))}</text>`;
+  if(prev){
+    const pp=prev.slice(0,Math.min(prev.length,days.length)).map((v,i)=>`${cx(i).toFixed(1)},${y(v).toFixed(1)}`);
+    s+=`<polyline points="${pp.join(' ')}" fill="none" stroke="#616061" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    prev.slice(0,days.length).forEach((v,i)=>{s+=`<circle cx="${cx(i)}" cy="${y(v)}" r="2.4" fill="#fff" stroke="#616061" stroke-width="1.4"/>`});
+  }
+  days.forEach((v,i)=>{s+=`<rect data-i="${i}" x="${L+i*band}" y="${T}" width="${band}" height="${ph}" fill="transparent"/>`});
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('width',W);svg.setAttribute('height',H);svg.innerHTML=s;
+  // leyenda y resumen
+  let lg=type==='bar'?`<span><i style="background:var(--blue)"></i>Día de semana</span><span><i style="background:var(--amber)"></i>Sábado y domingo</span><span><i style="background:var(--red)"></i>Día pico</span>`
+    :`<span><i style="background:var(--blue)"></i>${periodTxt()}</span><span><i style="background:#EAA63666"></i>Sábado y domingo</span><span><i style="background:var(--red);border-radius:50%"></i>Día pico</span>`;
+  const tot=days.reduce((a,b)=>a+b,0);
+  if(prev){const pt=prev.reduce((a,b)=>a+b,0),dl=pt?((tot-pt)/pt*100):0;
+    lg+=`<span><i style="background:none;border-top:2px dotted #616061;border-radius:0;height:0;width:16px"></i>${S.prev.label}</span>`;
+    $('chartSub').innerHTML=`<b style="color:var(--ink)">${fmt(tot)}</b> FUAs en ${periodTxt()} frente a <b style="color:var(--ink)">${fmt(pt)}</b> en ${S.prev.label} · <b style="color:${dl>=0?'var(--blue-d)':'var(--red-d)'}">${dl>=0?'▲ +':'▼ '}${dl.toFixed(1)}%</b>`}
+  else if(S.compare)$('chartSub').textContent='Cargando el mes anterior…';
+  else $('chartSub').textContent='Pasa el cursor sobre el gráfico para ver el detalle del día';
+  $('legend').innerHTML=lg;
 }
 (()=>{
   const svg=$('chart'),tip=$('tip');
   const show=e=>{const t=e.target.closest('[data-i]');if(!t){tip.hidden=true;return}
     const i=+t.dataset.i,d=i+1,v=lastDays[i],wr=$('chartWrap').getBoundingClientRect(),b=t.getBoundingClientRect();
-    tip.innerHTML=`<b>${DOW_NAME(S.year,S.month,d)} ${d} de ${MESES[S.month-1].toLowerCase()}</b><br>${fmt(v)} FUAs`;
+    tip.innerHTML=`<b>${DOW_NAME(S.year,S.month,d)} ${d} de ${MESES[S.month-1].toLowerCase()}</b><br>${fmt(v)} FUAs`+(lastPrev&&i<lastPrev.length?`<br><span style="opacity:.75">${S.prev.short} ${d}: ${fmt(lastPrev[i])} FUAs</span>`:'');
     tip.style.left=(b.left+b.width/2-wr.left)+'px';tip.style.top=(Math.max(20,e.clientY-wr.top-6))+'px';tip.hidden=false};
   svg.addEventListener('mousemove',show);svg.addEventListener('pointerdown',show);svg.addEventListener('mouseleave',()=>tip.hidden=true);
   if('ResizeObserver' in window)new ResizeObserver(()=>{if(S.view==='prod')drawChart()}).observe($('chartWrap'));
@@ -920,6 +986,7 @@ function exportCsv(){
 /* ---------- eventos ---------- */
 document.addEventListener('click',e=>{
   const t=e.target;
+  const ct=t.closest('[data-ct]');if(ct){cfg.chart=ct.dataset.ct;store.set('uspp.cfg',cfg);syncChartUI();drawChart();return}
   const nav=t.closest('#nav button');if(nav){setView(nav.dataset.view);return}
   const go=t.closest('[data-go]');if(go){setView(go.dataset.go);return}
   const lv=t.closest('[data-lv]');if(lv){S.f.lv=lv.dataset.lv;S.page.prod=1;S.page.personal=1;render();return}
@@ -933,6 +1000,7 @@ document.addEventListener('click',e=>{
   const tr=t.closest('tr[data-k]');if(tr&&!t.closest('a,button')){toggleKey(tr.dataset.k);render()}
 });
 function clearFilters(){S.f.e=S.f.t=S.f.q='';$('fEess').value='';$('fTipo').value='';$('fQ').value='';S.page={prod:1,personal:1,ees:1};render()}
+$('cmpChk').onchange=e=>{S.compare=e.target.checked;ensurePrev()};
 $('fClear').onclick=clearFilters;
 $('fEess').onchange=e=>{S.f.e=e.target.value;S.page={prod:1,personal:1,ees:1};render()};
 $('fTipo').onchange=e=>{S.f.t=e.target.value;S.page={prod:1,personal:1,ees:1};render()};
@@ -986,7 +1054,7 @@ async function init(){
     if(!m||!Array.isArray(m.disponibles)||!m.disponibles.length)throw new Error('El manifiesto no contiene meses disponibles.');
     S.manifest=m;const ps=periods(),u=m.ultimo;
     const closed=ps.filter(p=>!(u&&p.anio===u.anio&&p.mes===u.mes)),ini=(closed.length?closed:ps).slice(-1)[0];
-    S.year=ini.anio;S.month=ini.mes;fillPeriod();setProg(null);
+    S.year=ini.anio;S.month=ini.mes;fillPeriod();setProg(null);syncChartUI();
     const h=(location.hash||'').slice(1);if(['prod','personal','eess','rep'].includes(h))S.view=h;
     setView(S.view,false);await loadMonth();
   }catch(e){setProg(null);S.busy=false;showErr('No se pudo iniciar el tablero.',e)}
