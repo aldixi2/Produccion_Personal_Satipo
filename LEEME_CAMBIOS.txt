@@ -1,0 +1,19 @@
+ACTUALIZACION DEL DASHBOARD - USPP RED DE SALUD SATIPO
+
+COMO INSTALAR
+1. Copia estos 3 elementos DENTRO de tu carpeta produccion-satipo (junto a la carpeta data):
+     index.html      (reemplaza el anterior)
+     assets/         (logo de la Unidad)
+     vendor/         (libreria para generar el Excel, funciona sin internet)
+2. Ejecuta INICIAR_DASHBOARD.bat como siempre.
+
+COMO SACAR EL REPORTE
+1. En Produccion o Personal, marca con el check al personal que quieres.
+   (El check de la cabecera selecciona a todos los de la lista.)
+2. En la barra negra de abajo: "Reporte PDF" o "Excel".
+3. Reporte PDF abre una vista previa en hoja A4 horizontal. Pulsa "Imprimir / Guardar PDF".
+   Si son mas de ~33 personas se reparte automaticamente en varias hojas.
+4. Si no marcas a nadie, el reporte sale con todo lo que muestran los filtros.
+
+Configuracion (menu izquierdo): umbrales de produccion baja/alta, nombre y cargo de quien elabora.
+Ahorro de tinta: imprime sin colores de fondo.
