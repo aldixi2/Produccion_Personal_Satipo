@@ -119,6 +119,27 @@ function normalizarFila(r, sourceName){
   const f = parseFecha(fechaRaw);
   if(!f || !estab) return null;
 
+  // Seguimiento de FUA (opcional): se detecta por nombre de columna
+  const nk = k => k.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  const keys = Object.keys(r);
+  const kFua = keys.find(k=>nk(k).trim()==="fua") || keys.find(k=>nk(k).includes("fua") && !nk(k).includes("digit") && !nk(k).includes("estado"));
+  const kDni = keys.find(k=>nk(k).trim()==="digitador" || (nk(k).includes("digit") && nk(k).includes("dni")));
+  const kEst = keys.find(k=>nk(k).trim()==="estado fua");
+  const kHora = keys.find(k=>nk(k).trim()==="hora registro");
+  const kFec = keys.find(k=>nk(k).trim()==="fecha registro" || (nk(k).includes("digit") && nk(k).includes("fec")));
+  const extra = {};
+  if(kFua) extra.fua = String(r[kFua]).trim();
+  if(kEst) extra.estado_fua = String(r[kEst]).trim();
+  if(kDni) extra.dni_digitador = soloDigitos(r[kDni]);
+  if(kFec){
+    const fd = parseFecha(r[kFec]);
+    let hm = "";
+    if(typeof r[kFec]==="number"){ const p = XLSX.SSF.parse_date_code(r[kFec]); if(p && (p.H||p.M)) hm = " "+String(p.H).padStart(2,"0")+":"+String(p.M).padStart(2,"0"); }
+    else { const m = String(r[kFec]).match(/(\d{1,2}):(\d{2})/); if(m) hm = " "+m[1].padStart(2,"0")+":"+m[2]; }
+    if(!hm && kHora && /^\d{1,2}:\d{2}/.test(String(r[kHora]).trim())) hm = " "+String(r[kHora]).trim().slice(0,5).padStart(5,"0");
+    extra.fecha_digitacion = fd ? fd.iso+hm : "";
+  }
+
   return {
     anio: f.y, mes: f.m, dia: f.d, fecha: f.iso,
     establecimiento: estab,
@@ -127,7 +148,8 @@ function normalizarFila(r, sourceName){
     dni_prof: soloDigitos(dniProf),
     servicio: servicio,
     id_servicio: idServicio,
-    source: sourceName
+    source: sourceName,
+    ...extra
   };
 }
 

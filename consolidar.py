@@ -29,6 +29,8 @@ def norm_col(s: str) -> str:
 def canon_dni(v) -> str:
     """DNI solo dígitos (evita 12345678.0, espacios, etc.)."""
     s = "" if v is None else str(v).strip()
+    if re.fullmatch(r"\d+\.0+", s):   # 12345678.0 -> 12345678
+        s = s.split(".")[0]
     return re.sub(r"\D", "", s)
 
 def pick_value(row: dict, candidates: list[str], default=""):
@@ -64,6 +66,23 @@ def parse_date_any(v):
         return pd.to_datetime(s, errors="coerce").to_pydatetime()
     except:
         return None
+
+def find_col(colmap, exactos=(), todas=(), excluir=()):
+    """Busca una columna por nombre exacto o por palabras clave (normalizadas)."""
+    for e in exactos:
+        if e in colmap:
+            return colmap[e]
+    for k, orig in colmap.items():
+        if all(t in k for t in todas) and not any(x in k for x in excluir):
+            return orig
+    return None
+
+def fecha_hora(v):
+    """Fecha(+hora) ISO: 'YYYY-MM-DD' o 'YYYY-MM-DD HH:MM'. Vacío si no hay."""
+    d = parse_date_any(v)
+    if not d:
+        return ""
+    return d.strftime("%Y-%m-%d %H:%M") if (d.hour or d.minute) else d.strftime("%Y-%m-%d")
 
 def detect_columns(df: pd.DataFrame):
     """Devuelve mapeo normalizado: col_norm -> col_original"""
@@ -216,6 +235,16 @@ def main():
         prof_col = colmap.get("profesional") or colmap.get("nombres profesional") or colmap.get("nombre profesional") or colmap.get("profesional responsable") or colmap.get("responsable atencion") or colmap.get("resp. aten.") or colmap.get("resp aten") or colmap.get("personal") or prof_col
         tipo_col = colmap.get("tipo profesional") or colmap.get("tipo_profesional") or colmap.get("profesion") or colmap.get("tipo personal") or colmap.get("cargo") or tipo_col
 
+        # --- Seguimiento de FUA (opcional): N° FUA, DNI digitador, fecha de digitación ---
+        fua_col = find_col(colmap, ("nro fua","n fua","n° fua","num fua","numero fua","fua","nro. fua","lote"), ("fua",), ("digit",))
+        dni_dig_col = find_col(colmap, ("digitador","dni digitador","dni del digitador","dni_digitador","dni usuario digitador"), ("digit",))
+        fec_dig_col = find_col(colmap, ("fecha registro","fecha digitacion","fecha de digitacion","fec digitacion","fec. digitacion","fecha digitado"), ("digit","fec"))
+        hora_dig_col = find_col(colmap, ("hora registro","hora digitacion","hora de digitacion"))
+        estado_fua_col = find_col(colmap, ("estado fua",))
+        print("   FUA:", fua_col, "| DNI digitador:", dni_dig_col, "| Fecha digitación:", fec_dig_col)
+        if not (fua_col or dni_dig_col or fec_dig_col):
+            print("   (sin columnas de digitación; columnas del archivo:", list(df.columns), ")")
+
         # Recorremos filas
         for _, row in df.iterrows():
             total_rows += 1
@@ -250,6 +279,19 @@ def main():
                 "id_servicio": id_serv,
                 "source": fn
             }
+
+            if fua_col is not None:
+                rec["fua"] = str(row.get(fua_col, "")).strip().replace("nan", "")
+            if dni_dig_col is not None:
+                rec["dni_digitador"] = canon_dni(row.get(dni_dig_col, ""))
+            if fec_dig_col is not None:
+                fd = fecha_hora(row.get(fec_dig_col))
+                hr = "" if hora_dig_col is None else str(row.get(hora_dig_col, "")).strip()
+                if fd and len(fd) == 10 and re.fullmatch(r"\d{1,2}:\d{2}(:\d{2})?", hr):
+                    fd += " " + hr[:5].zfill(5)
+                rec["fecha_digitacion"] = fd
+            if estado_fua_col is not None:
+                rec["estado_fua"] = str(row.get(estado_fua_col, "")).strip().replace("nan", "")
 
             buckets.setdefault((anio, mes), []).append(rec)
             used_rows += 1
