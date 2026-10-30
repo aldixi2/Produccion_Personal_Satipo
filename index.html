@@ -1154,7 +1154,7 @@ async function init(){
     const m=await fetchJSON('data/manifest.json');
     if(!m||!Array.isArray(m.disponibles)||!m.disponibles.length)throw new Error('El manifiesto no contiene meses disponibles.');
     S.manifest=m;const ps=periods(),u=m.ultimo;
-    const closed=ps.filter(p=>!(u&&p.anio===u.anio&&p.mes===u.mes)),ini=(closed.length?closed:ps).slice(-1)[0];
+    const ini=ps.slice(-1)[0]; // siempre abre en el último mes cargado
     S.year=ini.anio;S.month=ini.mes;fillPeriod();setProg(null);syncChartUI();
     const h=(location.hash||'').slice(1);if(['prod','personal','eess','rep','fua'].includes(h))S.view=h;
     setView(S.view,false);await loadMonth();
